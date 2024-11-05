@@ -221,3 +221,28 @@ class FrameExtractor(object):
                 )
 
         return extracted_candidate_key_frames
+
+def extract_candidate_frame_indices(self, videopath):
+        """Public function for this module. Given an input video path,
+        this function returns a list of indices of all candidate keyframes.
+
+        :param videopath: input video path
+        :type videopath: `str`
+        :return: list of indices for candidate keyframes
+        :rtype: list of int
+        """
+        extracted_candidate_key_frame_indices = []
+
+        # Get all frames from video in chunks using python Generators
+        frame_extractor_from_video_generator = self.__extract_all_frames_from_video__(videopath)
+
+        # Loop over every frame in the frame extractor generator object and calculate the
+        # local maxima of frames 
+        for frames, frame_diffs in frame_extractor_from_video_generator:
+            extracted_candidate_key_frame_indices_chunk = []
+            if self.USE_LOCAL_MAXIMA:
+                # Getting the indices of frames with maximum frame difference
+                extracted_candidate_key_frame_indices_chunk = self.__get_frame_indices_in_local_maxima__(frame_diffs)
+                extracted_candidate_key_frame_indices.extend(extracted_candidate_key_frame_indices_chunk)
+
+        return extracted_candidate_key_frame_indices
